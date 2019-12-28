@@ -1,0 +1,45 @@
+#!/usr/bin/env sh
+#
+# Screengun, by knuxify
+# Usage: screengun <path to screenshot directory>
+#
+
+### Initial setup ###
+
+# Helper functions
+die() {
+	echo "$*"; exit 1
+}
+
+# Check arguments.
+[ -z "$*" ] && die "No screenshot directory provided.\nUsage: $0 <path to screenshot directory>"
+[ ! -d "$*" ] && die "Screenshot directory is not a directory or does not exist.\nUsage: $0 <path to screenshot directory>"
+
+### Sorting ###
+
+# Take the screenshot. You can replace this command, but the screenshot MUST be saved as "$*/Screenshot.png".
+# In this example, the _forcefullscreen variable can be assigned prior to running the command to force a full-screen capture, like so: _forcefullscreen=true screengun
+# shellcheck disable=SC2154
+if [ "$_forcefullscreen" ]; then maim > "$*/Screenshot.png"; else maim --select > "$*/Screenshot.png"; fi
+
+# Get a date in YYYY-MM and prepend the directory to it. This is done here to avoid any inconsistency issues and call less commands.
+datedir="$*/$(date +%Y-%m)"
+
+# Check if the screenshot directory has a folder named YYYY-MM. If not, create one.
+[ ! -e "$datedir" ] && mkdir "$datedir"
+
+# Find the last sorted screenshot. If none is found, default to 0.
+sortnum=$(find "$*" -type f \( ! -name Screenshot.png \) | sort -n | tail -1 | sed 's!.*/!!' | sed -e 's/[^0-9]*//g')
+[ -z "$sortnum" ] && sortnum=0
+
+# Finally, bump the number up and move the screenshot.
+sortnum="$((sortnum+1))"
+mv "$*/Screenshot.png" "$datedir/Screenshot_$sortnum.png"
+
+### Post-sorting ###
+
+# Copy to clipboard
+xclip -selection clipboard -t "image/png" "$datedir/Screenshot_$sortnum.png"
+
+# Notify user
+notify-send "Screenshot saved!" "The screenshot was saved as Screenshot_$sortnum.png and copied to the clipboard."
