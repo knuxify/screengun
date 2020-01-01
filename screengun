@@ -29,7 +29,7 @@ datedir="$*/$(date +%Y-%m)"
 [ ! -e "$datedir" ] && mkdir "$datedir"
 
 # Find the last sorted screenshot. If none is found, default to 0.
-sortnum=$(find "$*" -type f \( ! -name Screenshot.png \) | sort -n | tail -1 | sed 's!.*/!!' | sed -e 's/[^0-9]*//g')
+sortnum=$(find "$*" -type f \( ! -name Screenshot.png \) | sort --version-sort | tail -1 | sed 's!.*/!!' | sed -e 's/[^0-9]*//g')
 [ -z "$sortnum" ] && sortnum=0
 
 # Finally, bump the number up and move the screenshot.
