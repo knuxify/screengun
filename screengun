@@ -20,7 +20,7 @@ die() {
 # Take the screenshot. You can replace this command, but the screenshot MUST be saved as "$*/Screenshot.png".
 # In this example, the _forcefullscreen variable can be assigned prior to running the command to force a full-screen capture, like so: _forcefullscreen=true screengun
 # shellcheck disable=SC2154
-if [ "$_forcefullscreen" ]; then maim > "$*/Screenshot.png"; else maim --select > "$*/Screenshot.png"; fi
+if [ "$_forcefullscreen" ]; then maim > "$*/Screenshot.png" || die; else maim --select > "$*/Screenshot.png" || die; fi
 
 # Get a date in YYYY-MM and prepend the directory to it. This is done here to avoid any inconsistency issues and call less commands.
 datedir="$*/$(date +%Y-%m)"
